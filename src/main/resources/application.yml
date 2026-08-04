@@ -53,6 +53,14 @@ xubio:
     connect-timeout: 10000
     read-timeout: 300000
 
+magiis:
+  api:
+    base-url: ${MAGIIS_BASE_URL:https://api.public.magiis.com}
+    username: ${MAGIIS_USERNAME:}
+    password: ${MAGIIS_PASSWORD:}
+    connect-timeout: 5000
+    read-timeout: 15000
+
 # ─────────────────────────────────────────────
 # Schedulers (cron expressions)
 # ─────────────────────────────────────────────
@@ -79,6 +87,13 @@ scheduler:
     pagos:
       enabled: false
       cron: "0 45 * * * *"        # cada hora a los :45
+  magiis:
+    viajes:
+      enabled: false
+      cron: "0 15 * * * *"        # cada hora a los :15 (histórico)
+    cuentasCorrientes:
+      enabled: false
+      cron: "0 0 3 * * *"         # todos los días a las 3am
 
 # ─────────────────────────────────────────────
 # Retry

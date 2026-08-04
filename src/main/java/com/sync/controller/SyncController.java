@@ -1,5 +1,6 @@
 package com.sync.controller;
 
+import com.sync.service.MagiisSyncService;
 import com.sync.service.XubioSyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class SyncController {
 
     private final XubioSyncService xubioSyncService;
+    private final MagiisSyncService magiisSyncService;
 
     // ─── XUBIO ───────────────────────────────────────────────────────────────
 
@@ -74,9 +76,38 @@ public class SyncController {
         return ResponseEntity.ok(toMap("xubio", "pagos", result));
     }
 
+    // ─── MAGIIS ──────────────────────────────────────────────────────────────
+
+    @PostMapping("/magiis/viajes")
+    public ResponseEntity<Map<String, Object>> syncMagiisViajes(
+            @RequestParam(required = false) String desde,
+            @RequestParam(required = false) String hasta) {
+        log.info("Sync manual: Magiis Viajes (histórico)");
+        var result = magiisSyncService.syncViajes(desde, hasta);
+        return ResponseEntity.ok(toMap("magiis", "viajes", result));
+    }
+
+    @PostMapping("/magiis/cuentas-corrientes")
+    public ResponseEntity<Map<String, Object>> syncMagiisCuentasCorrientes() {
+        log.info("Sync manual: Magiis Cuentas Corrientes");
+        var result = magiisSyncService.syncCuentasCorrientes();
+        return ResponseEntity.ok(toMap("magiis", "cuentas_corrientes", result));
+    }
+
     // ─── HELPERS ─────────────────────────────────────────────────────────────
 
     private Map<String, Object> toMap(String source, String entity, XubioSyncService.SyncResult result) {
+        return Map.of(
+                "source", source,
+                "entity", entity,
+                "fetched", result.fetched(),
+                "created", result.created(),
+                "updated", result.updated(),
+                "status", "success"
+        );
+    }
+
+    private Map<String, Object> toMap(String source, String entity, MagiisSyncService.SyncResult result) {
         return Map.of(
                 "source", source,
                 "entity", entity,

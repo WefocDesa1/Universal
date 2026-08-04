@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Schema para la integración con Magiis: viajes (histórico) y cuentas corrientes -->
+
+    <changeSet id="008-magiis-viajes" author="sync">
+        <createTable tableName="magiis_viajes">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="travel_id_for_carrier" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="state" type="VARCHAR(50)"/>
+            <column name="passenger_first_name" type="VARCHAR(100)"/>
+            <column name="passenger_last_name" type="VARCHAR(100)"/>
+            <column name="driver_first_name" type="VARCHAR(100)"/>
+            <column name="driver_last_name" type="VARCHAR(100)"/>
+            <column name="vehicle_mark" type="VARCHAR(100)"/>
+            <column name="vehicle_model" type="VARCHAR(100)"/>
+            <column name="vehicle_domain" type="VARCHAR(50)"/>
+            <column name="car_plate" type="VARCHAR(50)"/>
+            <column name="origin" type="TEXT"/>
+            <column name="destination" type="TEXT"/>
+            <column name="creation_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="final_price" type="DECIMAL(18,2)"/>
+            <column name="simulate_price" type="DECIMAL(18,2)"/>
+            <column name="payment_method" type="VARCHAR(50)"/>
+            <column name="service_type" type="VARCHAR(100)"/>
+            <column name="is_programmed" type="BOOLEAN"/>
+            <column name="delivery" type="BOOLEAN"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="magiis_viajes" indexName="idx_magiis_viajes_state">
+            <column name="state"/>
+        </createIndex>
+        <createIndex tableName="magiis_viajes" indexName="idx_magiis_viajes_creation_date">
+            <column name="creation_date"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="008-magiis-cuentas-corrientes" author="sync">
+        <createTable tableName="magiis_cuentas_corrientes">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="checking_account_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="passenger_class" type="VARCHAR(50)"/>
+            <column name="balance" type="DECIMAL(18,2)"/>
+            <column name="limit_amount" type="DECIMAL(18,2)"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
