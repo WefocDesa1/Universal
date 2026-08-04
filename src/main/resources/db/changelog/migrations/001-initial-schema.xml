@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-xubio-clientes" author="sync">
+        <createTable tableName="xubio_clientes">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cliente_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-xubio-facturas" author="sync">
+        <createTable tableName="xubio_facturas">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="numero" type="VARCHAR(50)"/>
+            <column name="tipo_comprobante" type="VARCHAR(20)"/>
+            <column name="fecha" type="DATE"/>
+            <column name="fecha_vencimiento" type="DATE"/>
+            <column name="cliente_xubio_id" type="VARCHAR(100)"/>
+            <column name="subtotal" type="DECIMAL(18,2)"/>
+            <column name="iva" type="DECIMAL(18,2)"/>
+            <column name="total" type="DECIMAL(18,2)"/>
+            <column name="estado" type="VARCHAR(50)"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-indexes" author="sync">
+        <createIndex tableName="xubio_facturas" indexName="idx_xubio_facturas_fecha">
+            <column name="fecha"/>
+        </createIndex>
+        <createIndex tableName="xubio_facturas" indexName="idx_xubio_facturas_cliente">
+            <column name="cliente_xubio_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

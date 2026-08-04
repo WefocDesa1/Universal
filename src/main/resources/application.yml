@@ -1,0 +1,117 @@
+spring:
+  application:
+    name: xubio-sync
+
+  datasource:
+    url: jdbc:postgresql://trolley.proxy.rlwy.net:11598/railway
+    username: postgres
+    password: cMsOSZfQiefwWWfksSiaqcjihcJFmpnb
+    driver-class-name: org.postgresql.Driver
+    liquibase:
+      enabled: true
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate        # Liquibase maneja el schema, Hibernate solo valida
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
+      client:
+        config:
+          default:
+            connectTimeout: 10000
+            readTimeout: 300000
+          xubio-client:
+            connectTimeout: 10000
+            readTimeout: 300000
+
+# ─────────────────────────────────────────────
+# APIs externas
+# ─────────────────────────────────────────────
+xubio:
+  api:
+    base-url: https://xubio.com/API/1.1
+    client-id: ${XUBIO_CLIENT_ID:166595643048938330811999560100413443433699309390229770626848980369153393578787643048166595346547233919}
+    client-secret: ${XUBIO_CLIENT_SECRET:i+yG*aXcwzK5hdE1z8bow-yxyzJ18jIJiVO/meoldkFF0yFfaxz6H1CEoh8Gh2ThMqaXipxo+lXcbJVWAokV/BXRwbrMMaKVLQlwh/bsUi+yG*aXcwzK5hdE1z8bow-yxyz}
+    token-url: https://xubio.com/API/1.1/TokenEndpoint
+    connect-timeout: 10000
+    read-timeout: 300000
+
+# ─────────────────────────────────────────────
+# Schedulers (cron expressions)
+# ─────────────────────────────────────────────
+scheduler:
+  xubio:
+    facturas:
+      enabled: false
+      cron: "0 0 2 * * *"         # cada hora
+    clientes:
+      enabled: false
+      cron: "0 0 2 * * *"         # todos los días a las 2am
+    proveedores:
+      enabled: false
+      cron: "0 30 1 * * *"        # todos los días a la 1:30am
+    comprobanteVenta:
+      enabled: false
+      cron: "0 0 2 * * *"         # cada hora
+    comprobanteCompra:
+      enabled: false
+      cron: "0 15 * * * *"        # cada hora a los :15
+    cobranzas:
+      enabled: false
+      cron: "0 30 * * * *"        # cada hora a los :30
+    pagos:
+      enabled: false
+      cron: "0 45 * * * *"        # cada hora a los :45
+
+# ─────────────────────────────────────────────
+# Retry
+# ─────────────────────────────────────────────
+retry:
+  max-attempts: 3
+  initial-interval: 2000
+  multiplier: 2.0
+  max-interval: 10000
+
+# ─────────────────────────────────────────────
+# Actuator
+# ─────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,scheduledtasks
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.sync: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: WARN
+  file:
+    name: logs/sync-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30

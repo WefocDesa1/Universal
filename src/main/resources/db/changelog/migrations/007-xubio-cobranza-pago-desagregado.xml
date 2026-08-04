@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Catálogo de conceptos de retención (aparece en transaccionRetencionItems
+         de cobranzas y pagos). Sin endpoint propio: se completa a medida
+         que aparece referenciado.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="009-xubio-conceptos-retencion" author="sync">
+        <createTable tableName="xubio_conceptos_retencion">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Desagregar xubio_cobranzas: "transaccionInstrumentoDeCobro" y
+         "transaccionRetencionItems" pasan de JSON a tablas propias.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="009-xubio-cobranza-instrumentos" author="sync">
+        <createTable tableName="xubio_cobranza_instrumentos">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="cobranza_id" type="BIGINT">
+                <constraints nullable="false" references="xubio_cobranzas(id)" foreignKeyName="fk_cobranza_instrumentos_cobranza"/>
+            </column>
+            <column name="transaccion_ic_id" type="BIGINT"/>
+            <column name="cuenta_tipo" type="INTEGER"/>
+            <column name="cuenta_id" type="BIGINT"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="importe" type="DECIMAL(18,2)"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="009-xubio-cobranza-retenciones" author="sync">
+        <createTable tableName="xubio_cobranza_retenciones">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="cobranza_id" type="BIGINT">
+                <constraints nullable="false" references="xubio_cobranzas(id)" foreignKeyName="fk_cobranza_retenciones_cobranza"/>
+            </column>
+            <column name="transaccion_r_item_id" type="BIGINT"/>
+            <column name="tipo_retencion" type="VARCHAR(20)"/>
+            <column name="concepto_retencion_id" type="BIGINT"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="numero_comprobante" type="VARCHAR(100)"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="importe_isar" type="DECIMAL(18,2)"/>
+            <column name="importe_retenido" type="DECIMAL(18,2)"/>
+            <column name="importe_mon_ppal" type="DECIMAL(18,2)"/>
+            <column name="fecha_comprobante" type="DATE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="009-xubio-cobranzas-drop-json" author="sync">
+        <dropColumn tableName="xubio_cobranzas" columnName="instrumentos_cobro_json"/>
+        <dropColumn tableName="xubio_cobranzas" columnName="retenciones_json"/>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Desagregar xubio_pagos: "transaccionInstrumentoDePago" y
+         "transaccionRetencionItems" pasan de JSON a tablas propias.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="009-xubio-pago-instrumentos" author="sync">
+        <createTable tableName="xubio_pago_instrumentos">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="pago_id" type="BIGINT">
+                <constraints nullable="false" references="xubio_pagos(id)" foreignKeyName="fk_pago_instrumentos_pago"/>
+            </column>
+            <column name="transaccion_ip_id" type="BIGINT"/>
+            <column name="tipo_cuenta" type="INTEGER"/>
+            <column name="cuenta_id" type="BIGINT"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="importe" type="DECIMAL(18,2)"/>
+            <column name="cheque_terceros" type="INTEGER"/>
+            <column name="cheque_propio" type="VARCHAR(100)"/>
+            <column name="vencimiento_cheque" type="DATE"/>
+            <column name="banco_id" type="BIGINT"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="009-xubio-pago-retenciones" author="sync">
+        <createTable tableName="xubio_pago_retenciones">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="pago_id" type="BIGINT">
+                <constraints nullable="false" references="xubio_pagos(id)" foreignKeyName="fk_pago_retenciones_pago"/>
+            </column>
+            <column name="transaccion_r_item_id" type="BIGINT"/>
+            <column name="tipo_retencion" type="VARCHAR(20)"/>
+            <column name="concepto_retencion_id" type="BIGINT"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="numero_comprobante" type="VARCHAR(100)"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="importe_isar" type="DECIMAL(18,2)"/>
+            <column name="importe_retenido" type="DECIMAL(18,2)"/>
+            <column name="importe_mon_ppal" type="DECIMAL(18,2)"/>
+            <column name="fecha_comprobante" type="DATE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="009-xubio-pagos-drop-json" author="sync">
+        <dropColumn tableName="xubio_pagos" columnName="instrumentos_pago_json"/>
+        <dropColumn tableName="xubio_pagos" columnName="retenciones_json"/>
+    </changeSet>
+
+</databaseChangeLog>

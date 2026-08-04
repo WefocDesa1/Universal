@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="004-xubio-transacciones" author="sync">
+        <createTable tableName="xubio_transacciones">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transaccion_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="external_id" type="VARCHAR(255)"/>
+            <column name="tipo" type="INTEGER"/>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="fecha" type="DATE"/>
+            <column name="fecha_fiscal" type="DATE"/>
+            <column name="fecha_comprobante" type="DATE"/>
+            <column name="fecha_vto" type="DATE"/>
+            <column name="numero_documento" type="VARCHAR(100)"/>
+            <column name="punto_venta" type="VARCHAR(10)"/>
+            <column name="comprobante" type="INTEGER"/>
+            <column name="condicion_de_pago" type="INTEGER"/>
+            <column name="circuito_contable_id" type="BIGINT"/>
+            <column name="cuenta_bancaria_id" type="BIGINT"/>
+            <column name="deposito_id" type="BIGINT"/>
+            <column name="lista_de_precio_id" type="BIGINT"/>
+            <column name="proveedor_id" type="BIGINT"/>
+            <column name="provincia_id" type="BIGINT"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="importe_mon_principal" type="DECIMAL(18,2)"/>
+            <column name="importe_total" type="DECIMAL(18,2)"/>
+            <column name="importe_impuestos" type="DECIMAL(18,2)"/>
+            <column name="importe_gravado" type="DECIMAL(18,2)"/>
+            <column name="cotizacion_lista_de_precio" type="DECIMAL(18,6)"/>
+            <column name="cbu_informada" type="BOOLEAN"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="xubio_transacciones" indexName="idx_xubio_transacciones_fecha">
+            <column name="fecha"/>
+        </createIndex>
+        <createIndex tableName="xubio_transacciones" indexName="idx_xubio_transacciones_tipo">
+            <column name="tipo"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="004-xubio-transaccion-producto-items" author="sync">
+        <createTable tableName="xubio_transaccion_producto_items">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transaccion_id" type="BIGINT">
+                <constraints nullable="false" references="xubio_transacciones(id)" foreignKeyName="fk_producto_items_transaccion"/>
+            </column>
+            <column name="transaccion_cv_item_id" type="BIGINT"/>
+            <column name="producto_id" type="BIGINT"/>
+            <column name="centro_de_costo_id" type="BIGINT"/>
+            <column name="deposito_id" type="BIGINT"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="cantidad" type="DECIMAL(18,6)"/>
+            <column name="precio" type="DECIMAL(18,6)"/>
+            <column name="precio_con_iva_incluido" type="DECIMAL(18,6)"/>
+            <column name="iva" type="DECIMAL(18,2)"/>
+            <column name="importe" type="DECIMAL(18,2)"/>
+            <column name="total" type="DECIMAL(18,2)"/>
+            <column name="monto_exento" type="DECIMAL(18,2)"/>
+            <column name="porcentaje_descuento" type="DECIMAL(18,6)"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-xubio-transaccion-percepcion-items" author="sync">
+        <createTable tableName="xubio_transaccion_percepcion_items">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transaccion_id" type="BIGINT">
+                <constraints nullable="false" references="xubio_transacciones(id)" foreignKeyName="fk_percepcion_items_transaccion"/>
+            </column>
+            <column name="transaccion_cv_item_id" type="BIGINT"/>
+            <column name="percepcion_impuesto_id" type="BIGINT"/>
+            <column name="centro_de_costo_id" type="BIGINT"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="importe" type="DECIMAL(18,2)"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-xubio-transaccion-orden-pago-items" author="sync">
+        <createTable tableName="xubio_transaccion_orden_pago_items">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transaccion_id" type="BIGINT">
+                <constraints nullable="false" references="xubio_transacciones(id)" foreignKeyName="fk_orden_pago_items_transaccion"/>
+            </column>
+            <column name="item_id" type="BIGINT"/>
+            <column name="cuenta_tipo" type="VARCHAR(50)"/>
+            <column name="cuenta_id" type="BIGINT"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="cotizacion_mon_transaccion" type="DECIMAL(18,6)"/>
+            <column name="importe_mon_principal" type="DECIMAL(18,2)"/>
+            <column name="importe_mon_transaccion" type="DECIMAL(18,2)"/>
+            <column name="cheque_terceros" type="VARCHAR(100)"/>
+            <column name="cheque_propios" type="VARCHAR(100)"/>
+            <column name="fecha_vto" type="DATE"/>
+            <column name="banco_id" type="BIGINT"/>
+            <column name="descripcion" type="TEXT"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

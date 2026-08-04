@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Proveedores
+         Endpoint: GET /ProveedorBean
+         (No tenía migración propia; la tabla la creaba Hibernate al vuelo
+         porque ddl-auto estaba en "create", lo cual dropeaba y recreaba
+         todas las tablas en cada restart.)
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="006-xubio-proveedores" author="sync">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="xubio_proveedores"/>
+            </not>
+        </preConditions>
+        <createTable tableName="xubio_proveedores">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="proveedor_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Comprobantes de Venta: columnas presentes en el JSON real de
+         /comprobanteVentaBean que solo se guardaban dentro de raw_json.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="006-comprobantes-venta-campos-adicionales" author="sync">
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="importe_mon_principal" type="DECIMAL(18,2)"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="mail_estado" type="VARCHAR(50)"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="cbu_informada" type="BOOLEAN"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="cae" type="VARCHAR(50)"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="cae_fecha_vencimiento" type="DATE"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="circuito_contable_id" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="deposito_id" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="provincia_id" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="porcentaje_comision" type="DECIMAL(18,2)"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_venta">
+            <column name="factura_no_exportacion" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Comprobantes de Compra: columnas presentes en el JSON real de
+         /comprobanteCompraBean que solo se guardaban dentro de raw_json.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="006-comprobantes-compra-campos-adicionales" author="sync">
+        <addColumn tableName="xubio_comprobantes_compra">
+            <column name="importe_mon_principal" type="DECIMAL(18,2)"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_compra">
+            <column name="circuito_contable_id" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_compra">
+            <column name="fecha_comprobante" type="DATE"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_compra">
+            <column name="fecha_fiscal" type="DATE"/>
+        </addColumn>
+        <addColumn tableName="xubio_comprobantes_compra">
+            <column name="cbu_informada" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Catálogos de entidades de referencia embebidas (moneda,
+         circuitoContable, deposito, puntoVenta, provincia, banco,
+         cuentaBancaria). Xubio no expone un endpoint propio para listarlas:
+         se completan a medida que aparecen en otros comprobantes.
+         Misma estructura (xubio_id, nombre, codigo), tabla propia por tipo.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="007-xubio-monedas" author="sync">
+        <createTable tableName="xubio_monedas">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="007-xubio-circuitos-contables" author="sync">
+        <createTable tableName="xubio_circuitos_contables">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="007-xubio-depositos" author="sync">
+        <createTable tableName="xubio_depositos">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="007-xubio-puntos-venta" author="sync">
+        <createTable tableName="xubio_puntos_venta">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="007-xubio-provincias" author="sync">
+        <createTable tableName="xubio_provincias">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="007-xubio-bancos" author="sync">
+        <createTable tableName="xubio_bancos">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="007-xubio-cuentas-bancarias" author="sync">
+        <createTable tableName="xubio_cuentas_bancarias">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="codigo" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Cobranzas: circuitoContable venía en el JSON pero no tenía columna.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="007-xubio-cobranzas-circuito-contable" author="sync">
+        <addColumn tableName="xubio_cobranzas">
+            <column name="circuito_contable_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Migración: adaptar xubio_cobranzas al JSON real de /cobranzaBean.
+         Es el espejo de /pagoBean del lado del cliente: el monto y la
+         cuenta usada no vienen en el nivel superior, están dentro del
+         array "transaccionInstrumentoDeCobro" (igual que ya se hizo para
+         xubio_pagos en la migración 005-xubio-pagos-v2).
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="008-xubio-cobranzas-v2" author="sync">
+        <!-- Eliminar columnas del modelo anterior (nunca vienen en el JSON real) -->
+        <dropColumn tableName="xubio_cobranzas" columnName="estado"/>
+        <dropColumn tableName="xubio_cobranzas" columnName="medio_de_pago"/>
+        <dropColumn tableName="xubio_cobranzas" columnName="monto"/>
+        <dropColumn tableName="xubio_cobranzas" columnName="banco_id"/>
+        <dropColumn tableName="xubio_cobranzas" columnName="numero_cheque"/>
+        <dropColumn tableName="xubio_cobranzas" columnName="cuenta_bancaria_id"/>
+
+        <!-- Agregar columnas del JSON real -->
+        <addColumn tableName="xubio_cobranzas">
+            <column name="utiliza_moneda_extranjera" type="INTEGER"/>
+        </addColumn>
+        <addColumn tableName="xubio_cobranzas">
+            <column name="instrumentos_cobro_json" type="TEXT"/>
+        </addColumn>
+        <addColumn tableName="xubio_cobranzas">
+            <column name="retenciones_json" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

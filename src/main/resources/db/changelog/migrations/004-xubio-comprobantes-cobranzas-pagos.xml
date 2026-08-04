@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Comprobantes de Venta (facturas emitidas a clientes)
+         Endpoint: GET /comprobanteVentaBean
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="005-xubio-comprobantes-venta" author="sync">
+        <createTable tableName="xubio_comprobantes_venta">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="numero" type="VARCHAR(50)"/>
+            <column name="punto_de_venta" type="INTEGER"/>
+            <column name="tipo_de_comprobante" type="VARCHAR(20)"/>
+            <column name="fecha" type="DATE"/>
+            <column name="fecha_vencimiento" type="DATE"/>
+            <column name="estado" type="VARCHAR(50)"/>
+            <column name="condicion_de_pago" type="VARCHAR(100)"/>
+            <column name="cliente_xubio_id" type="BIGINT"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="subtotal" type="DECIMAL(18,2)"/>
+            <column name="descuento" type="DECIMAL(18,2)"/>
+            <column name="total_impuestos" type="DECIMAL(18,2)"/>
+            <column name="total" type="DECIMAL(18,2)"/>
+            <column name="saldo_pendiente" type="DECIMAL(18,2)"/>
+            <column name="observaciones" type="TEXT"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="xubio_comprobantes_venta" indexName="idx_compventa_fecha">
+            <column name="fecha"/>
+        </createIndex>
+        <createIndex tableName="xubio_comprobantes_venta" indexName="idx_compventa_cliente">
+            <column name="cliente_xubio_id"/>
+        </createIndex>
+        <createIndex tableName="xubio_comprobantes_venta" indexName="idx_compventa_estado">
+            <column name="estado"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Comprobantes de Compra (facturas recibidas de proveedores)
+         Endpoint: GET /comprobanteCompraBean
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="005-xubio-comprobantes-compra" author="sync">
+        <createTable tableName="xubio_comprobantes_compra">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="numero" type="VARCHAR(50)"/>
+            <column name="punto_de_venta" type="INTEGER"/>
+            <column name="tipo_de_comprobante" type="VARCHAR(20)"/>
+            <column name="fecha" type="DATE"/>
+            <column name="fecha_vencimiento" type="DATE"/>
+            <column name="estado" type="VARCHAR(50)"/>
+            <column name="condicion_de_pago" type="VARCHAR(100)"/>
+            <column name="proveedor_xubio_id" type="BIGINT"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="subtotal" type="DECIMAL(18,2)"/>
+            <column name="descuento" type="DECIMAL(18,2)"/>
+            <column name="total_impuestos" type="DECIMAL(18,2)"/>
+            <column name="total" type="DECIMAL(18,2)"/>
+            <column name="saldo_pendiente" type="DECIMAL(18,2)"/>
+            <column name="observaciones" type="TEXT"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="xubio_comprobantes_compra" indexName="idx_compcompra_fecha">
+            <column name="fecha"/>
+        </createIndex>
+        <createIndex tableName="xubio_comprobantes_compra" indexName="idx_compcompra_proveedor">
+            <column name="proveedor_xubio_id"/>
+        </createIndex>
+        <createIndex tableName="xubio_comprobantes_compra" indexName="idx_compcompra_estado">
+            <column name="estado"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Cobranzas (cobros/ingresos de clientes)
+         Endpoint: GET /cobranzaBean
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="005-xubio-cobranzas" author="sync">
+        <createTable tableName="xubio_cobranzas">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="numero" type="VARCHAR(50)"/>
+            <column name="fecha" type="DATE"/>
+            <column name="estado" type="VARCHAR(50)"/>
+            <column name="cliente_xubio_id" type="BIGINT"/>
+            <column name="comprobante_venta_id" type="BIGINT"/>
+            <column name="medio_de_pago" type="VARCHAR(50)"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="monto" type="DECIMAL(18,2)"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="banco_id" type="BIGINT"/>
+            <column name="numero_cheque" type="VARCHAR(50)"/>
+            <column name="cuenta_bancaria_id" type="BIGINT"/>
+            <column name="observaciones" type="TEXT"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="xubio_cobranzas" indexName="idx_cobranza_fecha">
+            <column name="fecha"/>
+        </createIndex>
+        <createIndex tableName="xubio_cobranzas" indexName="idx_cobranza_cliente">
+            <column name="cliente_xubio_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Pagos / Órdenes de Pago (pagos a proveedores)
+         Endpoint: GET /pagoBean
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="005-xubio-pagos" author="sync">
+        <createTable tableName="xubio_pagos">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="xubio_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="numero" type="VARCHAR(50)"/>
+            <column name="fecha" type="DATE"/>
+            <column name="estado" type="VARCHAR(50)"/>
+            <column name="proveedor_xubio_id" type="BIGINT"/>
+            <column name="comprobante_compra_id" type="BIGINT"/>
+            <column name="medio_de_pago" type="VARCHAR(50)"/>
+            <column name="moneda_id" type="BIGINT"/>
+            <column name="monto" type="DECIMAL(18,2)"/>
+            <column name="cotizacion" type="DECIMAL(18,6)"/>
+            <column name="banco_id" type="BIGINT"/>
+            <column name="numero_cheque" type="VARCHAR(50)"/>
+            <column name="cuenta_bancaria_id" type="BIGINT"/>
+            <column name="observaciones" type="TEXT"/>
+            <column name="raw_json" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="xubio_pagos" indexName="idx_pago_fecha">
+            <column name="fecha"/>
+        </createIndex>
+        <createIndex tableName="xubio_pagos" indexName="idx_pago_proveedor">
+            <column name="proveedor_xubio_id"/>
+        </createIndex>
+    </changeSet>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Migración: adaptar xubio_pagos al JSON real de /pagoBean
+         Agrega nuevas columnas y elimina las que no corresponden.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="005-xubio-pagos-v2" author="sync">
+        <!-- Eliminar columnas del modelo anterior -->
+        <dropColumn tableName="xubio_pagos" columnName="numero"/>
+        <dropColumn tableName="xubio_pagos" columnName="estado"/>
+        <dropColumn tableName="xubio_pagos" columnName="comprobante_compra_id"/>
+        <dropColumn tableName="xubio_pagos" columnName="medio_de_pago"/>
+        <dropColumn tableName="xubio_pagos" columnName="monto"/>
+        <dropColumn tableName="xubio_pagos" columnName="banco_id"/>
+        <dropColumn tableName="xubio_pagos" columnName="numero_cheque"/>
+        <dropColumn tableName="xubio_pagos" columnName="cuenta_bancaria_id"/>
+        <dropColumn tableName="xubio_pagos" columnName="observaciones"/>
+
+        <!-- Agregar columnas del JSON real -->
+        <addColumn tableName="xubio_pagos">
+            <column name="circuito_contable_id" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="xubio_pagos">
+            <column name="numero_recibo" type="VARCHAR(100)"/>
+        </addColumn>
+        <addColumn tableName="xubio_pagos">
+            <column name="utiliza_moneda_extranjera" type="INTEGER"/>
+        </addColumn>
+        <addColumn tableName="xubio_pagos">
+            <column name="observacion" type="TEXT"/>
+        </addColumn>
+        <addColumn tableName="xubio_pagos">
+            <column name="instrumentos_pago_json" type="TEXT"/>
+        </addColumn>
+        <addColumn tableName="xubio_pagos">
+            <column name="retenciones_json" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

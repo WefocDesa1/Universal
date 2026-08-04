@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+ 
+    <include file="db/changelog/migrations/001-initial-schema.xml"/>
+    <include file="db/changelog/migrations/002-sync-log.xml"/>
+    <include file="db/changelog/migrations/003-xubio-transacciones.xml"/>
+    <include file="db/changelog/migrations/004-xubio-comprobantes-cobranzas-pagos.xml"/>
+    <include file="db/changelog/migrations/005-xubio-proveedores-y-campos-adicionales.xml"/>
+    <include file="db/changelog/migrations/006-xubio-cobranzas-v2.xml"/>
+    <include file="db/changelog/migrations/007-xubio-cobranza-pago-desagregado.xml"/>
+
+</databaseChangeLog>
+ 

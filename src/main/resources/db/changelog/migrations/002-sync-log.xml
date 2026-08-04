@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Tabla para auditoría de cada ejecución del scheduler -->
+    <changeSet id="002-sync-log" author="sync">
+        <createTable tableName="sync_execution_log">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="source" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="records_fetched" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="records_created" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="records_updated" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="error_message" type="TEXT"/>
+            <column name="duration_ms" type="BIGINT"/>
+            <column name="executed_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="sync_execution_log" indexName="idx_sync_log_source_entity">
+            <column name="source"/>
+            <column name="entity_type"/>
+        </createIndex>
+        <createIndex tableName="sync_execution_log" indexName="idx_sync_log_executed_at">
+            <column name="executed_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

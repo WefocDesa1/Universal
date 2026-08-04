@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sync_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: syncdb
+      POSTGRES_USER: syncuser
+      POSTGRES_PASSWORD: syncpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d  # scripts SQL iniciales opcionales
+    networks:
+      - sync_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U syncuser -d syncdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: sync_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sync_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  sync_network:
+    driver: bridge
