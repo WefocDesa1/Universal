@@ -2,7 +2,9 @@ package com.sync.dto.magiis;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -19,16 +21,22 @@ public class MagiisPagedResponse<T> {
     @JsonProperty("page")
     private PageWrapper<T> page;
 
+    // Getter suprimido: colisiona con getContent() (mismo nombre lógico
+    // "content" para Jackson). El campo se sigue deserializando por el
+    // @JsonProperty; el valor se expone via getContent().
     @JsonProperty("content")
+    @Getter(AccessLevel.NONE)
     private List<T> rootContent;
 
     @JsonProperty("currencyCode")
     private String currencyCode;
 
     @JsonProperty("totalPages")
+    @Getter(AccessLevel.NONE)
     private Integer rootTotalPages;
 
     @JsonProperty("currentPage")
+    @Getter(AccessLevel.NONE)
     private Integer rootCurrentPage;
 
     public List<T> getContent() {

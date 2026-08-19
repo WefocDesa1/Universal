@@ -3,9 +3,15 @@ spring:
     name: xubio-sync
 
   datasource:
-    url: jdbc:postgresql://trolley.proxy.rlwy.net:11598/railway
-    username: postgres
-    password: cMsOSZfQiefwWWfksSiaqcjihcJFmpnb
+    # Railway (producción) - descomentar estas 3 lineas y comentar el bloque "local" de abajo para apuntar ahi
+    # url: jdbc:postgresql://trolley.proxy.rlwy.net:11598/railway
+    # username: postgres
+    # password: cMsOSZfQiefwWWfksSiaqcjihcJFmpnb
+
+    # Local (docker-compose) - valores por defecto, overrideables por env var
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/syncdb}
+    username: ${SPRING_DATASOURCE_USERNAME:syncuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:syncpassword}
     driver-class-name: org.postgresql.Driver
     liquibase:
       enabled: true
@@ -56,8 +62,8 @@ xubio:
 magiis:
   api:
     base-url: ${MAGIIS_BASE_URL:https://api.public.magiis.com}
-    username: ${MAGIIS_USERNAME:}
-    password: ${MAGIIS_PASSWORD:}
+    username: ${MAGIIS_USERNAME:apitestuniversal}
+    password: ${MAGIIS_PASSWORD:r6ocrghhoumjj4ceuofskk}
     connect-timeout: 5000
     read-timeout: 15000
 
