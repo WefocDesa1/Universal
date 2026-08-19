@@ -12,6 +12,7 @@
     <include file="db/changelog/migrations/005-xubio-proveedores-y-campos-adicionales.xml"/>
     <include file="db/changelog/migrations/006-xubio-cobranzas-v2.xml"/>
     <include file="db/changelog/migrations/007-xubio-cobranza-pago-desagregado.xml"/>
+    <include file="db/changelog/migrations/008-uappin-servicios.xml"/>
 
 </databaseChangeLog>
  

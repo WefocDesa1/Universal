@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Tabla de servicios de Uappin.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="010-uappin-servicios" author="sync">
+        <createTable tableName="uappin_servicios">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nro_servicio" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="fecha_inicio_toma" type="TIMESTAMP"/>
+            <column name="tomador_reserva" type="VARCHAR(100)"/>
+            <column name="fecha_fin_toma" type="TIMESTAMP"/>
+            <column name="forma_ingreso" type="VARCHAR(50)"/>
+            <column name="cliente" type="VARCHAR(255)"/>
+            <column name="tipo_documento" type="VARCHAR(20)"/>
+            <column name="documento_numero" type="VARCHAR(20)"/>
+            <column name="pasajero_nombre" type="VARCHAR(255)"/>
+            <column name="origen" type="TEXT"/>
+            <column name="destino" type="TEXT"/>
+            <column name="precio_servicio" type="DECIMAL(18,2)"/>
+            <column name="precio_adicionales" type="DECIMAL(18,2)"/>
+            <column name="plus_nocturno" type="DECIMAL(18,2)"/>
+            <column name="total_servicio" type="DECIMAL(18,2)"/>
+            <column name="comision_chofer_por_servicio" type="DECIMAL(18,2)"/>
+            <column name="gastos_chofer" type="DECIMAL(18,2)"/>
+            <column name="fecha_servicio" type="DATE"/>
+            <column name="hora_servicio" type="TIME"/>
+            <column name="fecha_fin_servicio" type="DATE"/>
+            <column name="hora_fin_servicio" type="TIME"/>
+            <column name="duracion_servicio" type="INTEGER"/>
+            <column name="kms_realizados" type="INTEGER"/>
+            <column name="categoria_servicio" type="VARCHAR(50)"/>
+            <column name="adicionales_servicio" type="TEXT"/>
+            <column name="atributos_servicio" type="TEXT"/>
+            <column name="apu" type="VARCHAR(1)"/>
+            <column name="codigo_conductor" type="VARCHAR(20)"/>
+            <column name="conductor" type="VARCHAR(100)"/>
+            <column name="conductor_propio" type="VARCHAR(1)"/>
+            <column name="movil" type="VARCHAR(100)"/>
+            <column name="patente" type="VARCHAR(20)"/>
+            <column name="tipo_de_pago" type="VARCHAR(50)"/>
+            <column name="unidad_negocio" type="VARCHAR(50)"/>
+            <column name="estado_servicio" type="VARCHAR(50)"/>
+            <column name="liquidacion_chofer" type="VARCHAR(20)"/>
+            <column name="orden_nro" type="BIGINT"/>
+            <column name="factura_nro" type="VARCHAR(50)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="010-uappin-servicios-indexes" author="sync">
+        <createIndex tableName="uappin_servicios" indexName="idx_uappin_servicios_fecha_servicio">
+            <column name="fecha_servicio"/>
+        </createIndex>
+        <createIndex tableName="uappin_servicios" indexName="idx_uappin_servicios_cliente">
+            <column name="cliente"/>
+        </createIndex>
+        <createIndex tableName="uappin_servicios" indexName="idx_uappin_servicios_estado_servicio">
+            <column name="estado_servicio"/>
+        </createIndex>
+        <createIndex tableName="uappin_servicios" indexName="idx_uappin_servicios_conductor">
+            <column name="conductor"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
