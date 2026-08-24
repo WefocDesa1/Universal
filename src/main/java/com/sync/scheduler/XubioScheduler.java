@@ -7,21 +7,32 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 /**
  * Scheduler para sincronizar datos de Xubio.
  *
  * Cada tarea se puede activar/desactivar individualmente
  * con la propiedad scheduler.xubio.<entidad>.enabled en application.yml
+ *
+ * Los endpoints con filtro de fecha (comprobantes, cobranzas, pagos) sincronizan
+ * una única vez por día la ventana de los últimos {@value #WINDOW_DAYS} días:
+ * cubre tanto lo del día (últimas 24hs) como correcciones/altas tardías de días
+ * previos, sin duplicar requests contra la API de Xubio. Los horarios de cada
+ * tarea están escalonados entre sí para no golpear la API con varios requests
+ * en simultáneo y evitar baneos.
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class XubioScheduler {
 
+    private static final int WINDOW_DAYS = 4;
+
     private final XubioSyncService xubioSyncService;
 
     /**
-     * Sincroniza clientes de Xubio.
+     * Sincroniza clientes de Xubio. Sin filtro de fecha: siempre trae el listado completo.
      * Por defecto: todos los días a las 2am.
      */
     @ConditionalOnProperty(name = "scheduler.xubio.clientes.enabled", havingValue = "true", matchIfMissing = true)
@@ -37,7 +48,7 @@ public class XubioScheduler {
     }
 
     /**
-     * Sincroniza proveedores de Xubio.
+     * Sincroniza proveedores de Xubio. Sin filtro de fecha: siempre trae el listado completo.
      * Por defecto: todos los días a la 1:30am.
      */
     @ConditionalOnProperty(name = "scheduler.xubio.proveedores.enabled", havingValue = "true", matchIfMissing = true)
@@ -48,20 +59,20 @@ public class XubioScheduler {
             var result = xubioSyncService.syncProveedor();
             log.info("[SCHEDULER][XUBIO] Proveedores completado: {}", result);
         } catch (Exception e) {
-            log.error("[SCHEDULER][XUBIO] Falló el sync de productos: {}", e.getMessage());
+            log.error("[SCHEDULER][XUBIO] Falló el sync de proveedores: {}", e.getMessage());
         }
     }
 
     /**
-     * Sincroniza Comprobantes de Venta.
-     * Por defecto: cada hora.
+     * Sincroniza Comprobantes de Venta de los últimos {@value #WINDOW_DAYS} días.
+     * Por defecto: todos los días a las 2:15am.
      */
     @ConditionalOnProperty(name = "scheduler.xubio.comprobanteVenta.enabled", havingValue = "true", matchIfMissing = true)
-    @Scheduled(cron = "${scheduler.xubio.comprobanteVenta.cron:0 0 * * * *}")
+    @Scheduled(cron = "${scheduler.xubio.comprobanteVenta.cron:0 15 2 * * *}")
     public void syncComprobanteVenta() {
-        log.info("[SCHEDULER][XUBIO] Iniciando sync de comprobantes de venta...");
+        log.info("[SCHEDULER][XUBIO] Iniciando sync de comprobantes de venta (últimos {} días)...", WINDOW_DAYS);
         try {
-            var result = xubioSyncService.syncComprobanteVenta();
+            var result = xubioSyncService.syncComprobanteVenta(windowStart(), windowEnd());
             log.info("[SCHEDULER][XUBIO] Comprobantes de venta completado: {}", result);
         } catch (Exception e) {
             log.error("[SCHEDULER][XUBIO] Falló el sync de comprobantes de venta: {}", e.getMessage());
@@ -69,15 +80,15 @@ public class XubioScheduler {
     }
 
     /**
-     * Sincroniza Comprobantes de Compra.
-     * Por defecto: cada hora a los :15.
+     * Sincroniza Comprobantes de Compra de los últimos {@value #WINDOW_DAYS} días.
+     * Por defecto: todos los días a las 2:30am.
      */
     @ConditionalOnProperty(name = "scheduler.xubio.comprobanteCompra.enabled", havingValue = "true", matchIfMissing = true)
-    @Scheduled(cron = "${scheduler.xubio.comprobanteCompra.cron:0 15 * * * *}")
+    @Scheduled(cron = "${scheduler.xubio.comprobanteCompra.cron:0 30 2 * * *}")
     public void syncComprobanteCompra() {
-        log.info("[SCHEDULER][XUBIO] Iniciando sync de comprobantes de compra...");
+        log.info("[SCHEDULER][XUBIO] Iniciando sync de comprobantes de compra (últimos {} días)...", WINDOW_DAYS);
         try {
-            var result = xubioSyncService.syncComprobanteCompra();
+            var result = xubioSyncService.syncComprobanteCompra(windowStart(), windowEnd());
             log.info("[SCHEDULER][XUBIO] Comprobantes de compra completado: {}", result);
         } catch (Exception e) {
             log.error("[SCHEDULER][XUBIO] Falló el sync de comprobantes de compra: {}", e.getMessage());
@@ -85,15 +96,15 @@ public class XubioScheduler {
     }
 
     /**
-     * Sincroniza Cobranzas.
-     * Por defecto: cada hora a los :30.
+     * Sincroniza Cobranzas de los últimos {@value #WINDOW_DAYS} días.
+     * Por defecto: todos los días a las 2:45am.
      */
     @ConditionalOnProperty(name = "scheduler.xubio.cobranzas.enabled", havingValue = "true", matchIfMissing = true)
-    @Scheduled(cron = "${scheduler.xubio.cobranzas.cron:0 30 * * * *}")
+    @Scheduled(cron = "${scheduler.xubio.cobranzas.cron:0 45 2 * * *}")
     public void syncCobranzas() {
-        log.info("[SCHEDULER][XUBIO] Iniciando sync de cobranzas...");
+        log.info("[SCHEDULER][XUBIO] Iniciando sync de cobranzas (últimos {} días)...", WINDOW_DAYS);
         try {
-            var result = xubioSyncService.syncCobranzas();
+            var result = xubioSyncService.syncCobranzas(windowStart(), windowEnd());
             log.info("[SCHEDULER][XUBIO] Cobranzas completado: {}", result);
         } catch (Exception e) {
             log.error("[SCHEDULER][XUBIO] Falló el sync de cobranzas: {}", e.getMessage());
@@ -101,18 +112,26 @@ public class XubioScheduler {
     }
 
     /**
-     * Sincroniza Pagos.
-     * Por defecto: cada hora a los :45.
+     * Sincroniza Pagos de los últimos {@value #WINDOW_DAYS} días.
+     * Por defecto: todos los días a las 3:00am.
      */
     @ConditionalOnProperty(name = "scheduler.xubio.pagos.enabled", havingValue = "true", matchIfMissing = true)
-    @Scheduled(cron = "${scheduler.xubio.pagos.cron:0 45 * * * *}")
+    @Scheduled(cron = "${scheduler.xubio.pagos.cron:0 0 3 * * *}")
     public void syncPagos() {
-        log.info("[SCHEDULER][XUBIO] Iniciando sync de pagos...");
+        log.info("[SCHEDULER][XUBIO] Iniciando sync de pagos (últimos {} días)...", WINDOW_DAYS);
         try {
-            var result = xubioSyncService.syncPagos();
+            var result = xubioSyncService.syncPagos(windowStart(), windowEnd());
             log.info("[SCHEDULER][XUBIO] Pagos completado: {}", result);
         } catch (Exception e) {
             log.error("[SCHEDULER][XUBIO] Falló el sync de pagos: {}", e.getMessage());
         }
+    }
+
+    private String windowStart() {
+        return LocalDate.now().minusDays(WINDOW_DAYS - 1).toString();
+    }
+
+    private String windowEnd() {
+        return LocalDate.now().toString();
     }
 }
