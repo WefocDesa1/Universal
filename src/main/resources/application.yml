@@ -53,10 +53,25 @@ xubio:
     connect-timeout: 10000
     read-timeout: 300000
 
+uappin:
+  sftp:
+    host: ${UAPPIN_SFTP_HOST:}
+    port: ${UAPPIN_SFTP_PORT:22}
+    username: ${UAPPIN_SFTP_USERNAME:}
+    private-key: ${UAPPIN_SFTP_PRIVATE_KEY:}
+    inbox-path: ${UAPPIN_SFTP_INBOX_PATH:/upload/inbox}
+    procesados-path: ${UAPPIN_SFTP_PROCESADOS_PATH:/upload/procesados}
+    error-path: ${UAPPIN_SFTP_ERROR_PATH:/upload/error}
+    connect-timeout: 10000
+
 # ─────────────────────────────────────────────
 # Schedulers (cron expressions)
 # ─────────────────────────────────────────────
 scheduler:
+  uappin:
+    servicios:
+      enabled: false               # activar (o setear SCHEDULER_UAPPIN_SERVICIOS_ENABLED=true) una vez que el SFTP esté configurado
+      cron: "0 0 4 * * *"          # todos los días a las 4am, después de los de Xubio
   xubio:
     facturas:
       enabled: false

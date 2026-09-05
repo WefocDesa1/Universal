@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         Tabla de control de archivos Uappin ya procesados via SFTP.
+         nombre_archivo es unique: evita reprocesar el mismo archivo aunque
+         el move a la carpeta "procesados" del SFTP falle o alguien lo
+         vuelva a subir a mano.
+    ══════════════════════════════════════════════════════════════════════ -->
+    <changeSet id="011-uappin-archivos-procesados" author="sync">
+        <createTable tableName="uappin_archivos_procesados">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nombre_archivo" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="estado" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="filas_leidas" type="INTEGER"/>
+            <column name="filas_creadas" type="INTEGER"/>
+            <column name="filas_actualizadas" type="INTEGER"/>
+            <column name="error_mensaje" type="TEXT"/>
+            <column name="procesado_en" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="uappin_archivos_procesados" indexName="idx_uappin_archivos_estado">
+            <column name="estado"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
