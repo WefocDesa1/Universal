@@ -59,6 +59,7 @@ uappin:
     port: ${UAPPIN_SFTP_PORT:22}
     username: ${UAPPIN_SFTP_USERNAME:}
     private-key: ${UAPPIN_SFTP_PRIVATE_KEY:}
+    password: ${UAPPIN_SFTP_PASSWORD:}
     inbox-path: ${UAPPIN_SFTP_INBOX_PATH:/upload/inbox}
     procesados-path: ${UAPPIN_SFTP_PROCESADOS_PATH:/upload/procesados}
     error-path: ${UAPPIN_SFTP_ERROR_PATH:/upload/error}

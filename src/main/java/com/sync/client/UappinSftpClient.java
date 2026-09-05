@@ -16,11 +16,15 @@ import java.util.Vector;
 /**
  * Cliente SFTP para levantar los reportes de Uappin.
  *
- * Autenticación por clave privada (sin password). El chequeo estricto de
- * host key está deshabilitado a propósito: la conexión va por la red
- * privada de Railway entre dos servicios del mismo proyecto, no por
- * internet público, así que el riesgo de MITM es marginal y no vale la
- * complejidad extra de mantener un known_hosts persistente.
+ * Autenticación por clave privada, con password como alternativa (útil
+ * para levantar un SFTP de prueba solo con variables de entorno, sin tener
+ * que montar un authorized_keys dentro del contenedor). Si ambas están
+ * seteadas, gana la clave.
+ *
+ * El chequeo estricto de host key está deshabilitado a propósito: pensado
+ * para conectar por la red privada de Railway entre dos servicios del mismo
+ * proyecto, no por internet público, así que el riesgo de MITM es marginal
+ * y no vale la complejidad extra de mantener un known_hosts persistente.
  */
 @Slf4j
 @Component
@@ -31,9 +35,16 @@ public class UappinSftpClient {
 
     public ChannelSftp connect() throws JSchException {
         JSch jsch = new JSch();
-        jsch.addIdentity("uappin-sftp", properties.getPrivateKey().getBytes(StandardCharsets.UTF_8), null, null);
+        Session session;
 
-        Session session = jsch.getSession(properties.getUsername(), properties.getHost(), properties.getPort());
+        if (properties.getPrivateKey() != null && !properties.getPrivateKey().isBlank()) {
+            jsch.addIdentity("uappin-sftp", properties.getPrivateKey().getBytes(StandardCharsets.UTF_8), null, null);
+            session = jsch.getSession(properties.getUsername(), properties.getHost(), properties.getPort());
+        } else {
+            session = jsch.getSession(properties.getUsername(), properties.getHost(), properties.getPort());
+            session.setPassword(properties.getPassword());
+        }
+
         session.setConfig("StrictHostKeyChecking", "no");
         session.setTimeout(properties.getConnectTimeout());
         session.connect();
