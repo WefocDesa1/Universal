@@ -1,5 +1,6 @@
 package com.sync.controller;
 
+import com.sync.service.UappinSyncService;
 import com.sync.service.XubioSyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class SyncController {
 
     private final XubioSyncService xubioSyncService;
+    private final UappinSyncService uappinSyncService;
 
     // ─── XUBIO ───────────────────────────────────────────────────────────────
 
@@ -72,6 +74,22 @@ public class SyncController {
         log.info("Sync manual: Xubio Pagos");
         var result = xubioSyncService.syncPagos(desde, hasta);
         return ResponseEntity.ok(toMap("xubio", "pagos", result));
+    }
+
+    // ─── UAPPIN ──────────────────────────────────────────────────────────────
+
+    @PostMapping("/uappin/servicios")
+    public ResponseEntity<Map<String, Object>> syncUappinServicios() {
+        log.info("Sync manual: Uappin Servicios (SFTP)");
+        var result = uappinSyncService.syncServicios();
+        return ResponseEntity.ok(Map.of(
+                "source", "uappin",
+                "entity", "servicios",
+                "archivosProcesados", result.archivosProcesados(),
+                "archivosConError", result.archivosConError(),
+                "filasTotales", result.filasTotales(),
+                "status", "success"
+        ));
     }
 
     // ─── HELPERS ─────────────────────────────────────────────────────────────
