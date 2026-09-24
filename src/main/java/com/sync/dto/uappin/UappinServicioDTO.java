@@ -35,7 +35,7 @@ public class UappinServicioDTO {
     private LocalDate fechaFinServicio;
     private LocalTime horaFinServicio;
     private Integer duracionServicio;
-    private Integer kmsRealizados;
+    private Integer kmsCartografia;
     private String categoriaServicio;
     private String adicionalesServicio;
     private String atributosServicio;
@@ -43,6 +43,7 @@ public class UappinServicioDTO {
     private String codigoConductor;
     private String conductor;
     private String conductorPropio;
+    private String tipoConductor;
     private String movil;
     private String patente;
     private String tipoDePago;
@@ -51,4 +52,5 @@ public class UappinServicioDTO {
     private String liquidacionChofer;
     private Long ordenNro;
     private String facturaNro;
+    private LocalDate fechaHoraUltimaModi;
 }

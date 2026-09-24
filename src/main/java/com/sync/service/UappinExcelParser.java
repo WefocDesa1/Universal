@@ -76,7 +76,7 @@ public class UappinExcelParser {
                 dto.setFechaFinServicio(getFecha(row, columnIndex, "FechaFinServicio", dataFormatter));
                 dto.setHoraFinServicio(getHora(row, columnIndex, "HoraFinServicio", dataFormatter));
                 dto.setDuracionServicio(getInteger(row, columnIndex, "DuracionServicio", dataFormatter));
-                dto.setKmsRealizados(getInteger(row, columnIndex, "KmsRealizados", dataFormatter));
+                dto.setKmsCartografia(getInteger(row, columnIndex, "KmsCartografia", dataFormatter));
                 dto.setCategoriaServicio(getString(row, columnIndex, "CategoriaServicio", dataFormatter));
                 dto.setAdicionalesServicio(getString(row, columnIndex, "AdicionalesServicio", dataFormatter));
                 dto.setAtributosServicio(getString(row, columnIndex, "AtributosServicio", dataFormatter));
@@ -84,6 +84,7 @@ public class UappinExcelParser {
                 dto.setCodigoConductor(getString(row, columnIndex, "CodigoConductor", dataFormatter));
                 dto.setConductor(getString(row, columnIndex, "Conductor", dataFormatter));
                 dto.setConductorPropio(getString(row, columnIndex, "ConductorPropio", dataFormatter));
+                dto.setTipoConductor(getString(row, columnIndex, "TipoConductor", dataFormatter));
                 dto.setMovil(getString(row, columnIndex, "Movil", dataFormatter));
                 dto.setPatente(getString(row, columnIndex, "Patente", dataFormatter));
                 dto.setTipoDePago(getString(row, columnIndex, "TipoDePago", dataFormatter));
@@ -92,6 +93,7 @@ public class UappinExcelParser {
                 dto.setLiquidacionChofer(getString(row, columnIndex, "LiquidacionChofer", dataFormatter));
                 dto.setOrdenNro(getLong(row, columnIndex, "OrdenNro", dataFormatter));
                 dto.setFacturaNro(getString(row, columnIndex, "FacturaNro", dataFormatter));
+                dto.setFechaHoraUltimaModi(getFecha(row, columnIndex, "FechaHoraUltimaModi", dataFormatter));
 
                 result.add(dto);
             }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="010-uappin-servicios-rename-columnas" author="sync" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <renameColumn tableName="uappin_servicios" oldColumnName="nro_servicio" newColumnName="NroServicio" columnDataType="BIGINT"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="fecha_inicio_toma" newColumnName="FechaInicioToma" columnDataType="TIMESTAMP"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="tomador_reserva" newColumnName="TomadorReserva" columnDataType="VARCHAR(100)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="fecha_fin_toma" newColumnName="FechaFinToma" columnDataType="TIMESTAMP"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="forma_ingreso" newColumnName="FormaIngreso" columnDataType="VARCHAR(50)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="cliente" newColumnName="Cliente" columnDataType="VARCHAR(255)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="tipo_documento" newColumnName="TipoDocumento" columnDataType="VARCHAR(20)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="documento_numero" newColumnName="DocumentoNumero" columnDataType="VARCHAR(20)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="pasajero_nombre" newColumnName="PasajeroNombre" columnDataType="VARCHAR(255)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="origen" newColumnName="Origen" columnDataType="TEXT"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="destino" newColumnName="Destino" columnDataType="TEXT"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="precio_servicio" newColumnName="PrecioServicio" columnDataType="DECIMAL(18,2)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="precio_adicionales" newColumnName="PrecioAdicionales" columnDataType="DECIMAL(18,2)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="plus_nocturno" newColumnName="PlusNocturno" columnDataType="DECIMAL(18,2)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="total_servicio" newColumnName="TotalServicio" columnDataType="DECIMAL(18,2)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="comision_chofer_por_servicio" newColumnName="ComisionChoferPorServicio" columnDataType="DECIMAL(18,2)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="gastos_chofer" newColumnName="GastosChofer" columnDataType="DECIMAL(18,2)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="fecha_servicio" newColumnName="FechaServicio" columnDataType="DATE"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="hora_servicio" newColumnName="HoraServicio" columnDataType="TIME"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="fecha_fin_servicio" newColumnName="FechaFinServicio" columnDataType="DATE"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="hora_fin_servicio" newColumnName="HoraFinServicio" columnDataType="TIME"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="duracion_servicio" newColumnName="DuracionServicio" columnDataType="INTEGER"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="kms_realizados" newColumnName="KmsCartografia" columnDataType="INTEGER"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="categoria_servicio" newColumnName="CategoriaServicio" columnDataType="VARCHAR(50)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="adicionales_servicio" newColumnName="AdicionalesServicio" columnDataType="TEXT"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="atributos_servicio" newColumnName="AtributosServicio" columnDataType="TEXT"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="apu" newColumnName="APU" columnDataType="VARCHAR(1)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="codigo_conductor" newColumnName="CodigoConductor" columnDataType="VARCHAR(20)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="conductor" newColumnName="Conductor" columnDataType="VARCHAR(100)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="conductor_propio" newColumnName="ConductorPropio" columnDataType="VARCHAR(1)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="movil" newColumnName="Movil" columnDataType="VARCHAR(100)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="patente" newColumnName="Patente" columnDataType="VARCHAR(20)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="tipo_de_pago" newColumnName="TipoDePago" columnDataType="VARCHAR(50)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="unidad_negocio" newColumnName="UnidadNegocio" columnDataType="VARCHAR(50)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="estado_servicio" newColumnName="EstadoServicio" columnDataType="VARCHAR(50)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="liquidacion_chofer" newColumnName="LiquidacionChofer" columnDataType="VARCHAR(20)"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="orden_nro" newColumnName="OrdenNro" columnDataType="BIGINT"/>
+        <renameColumn tableName="uappin_servicios" oldColumnName="factura_nro" newColumnName="FacturaNro" columnDataType="VARCHAR(50)"/>
+    </changeSet>
+
+    <changeSet id="010-uappin-servicios-columnas-nuevas" author="sync" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addColumn tableName="uappin_servicios">
+            <column name="TipoConductor" type="VARCHAR(50)"/>
+            <column name="FechaHoraUltimaModi" type="DATE"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

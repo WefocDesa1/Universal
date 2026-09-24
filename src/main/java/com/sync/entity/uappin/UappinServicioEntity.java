@@ -18,119 +18,125 @@ public class UappinServicioEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nro_servicio", nullable = false, unique = true)
+    @Column(name = "`NroServicio`", nullable = false, unique = true)
     private Long nroServicio;
 
-    @Column(name = "fecha_inicio_toma")
+    @Column(name = "`FechaInicioToma`")
     private LocalDateTime fechaInicioToma;
 
-    @Column(name = "tomador_reserva")
+    @Column(name = "`TomadorReserva`")
     private String tomadorReserva;
 
-    @Column(name = "fecha_fin_toma")
+    @Column(name = "`FechaFinToma`")
     private LocalDateTime fechaFinToma;
 
-    @Column(name = "forma_ingreso")
+    @Column(name = "`FormaIngreso`")
     private String formaIngreso;
 
-    @Column(name = "cliente")
+    @Column(name = "`Cliente`")
     private String cliente;
 
-    @Column(name = "tipo_documento")
+    @Column(name = "`TipoDocumento`")
     private String tipoDocumento;
 
-    @Column(name = "documento_numero")
+    @Column(name = "`DocumentoNumero`")
     private String documentoNumero;
 
-    @Column(name = "pasajero_nombre")
+    @Column(name = "`PasajeroNombre`")
     private String pasajeroNombre;
 
-    @Column(name = "origen", columnDefinition = "TEXT")
+    @Column(name = "`Origen`", columnDefinition = "TEXT")
     private String origen;
 
-    @Column(name = "destino", columnDefinition = "TEXT")
+    @Column(name = "`Destino`", columnDefinition = "TEXT")
     private String destino;
 
-    @Column(name = "precio_servicio", precision = 18, scale = 2)
+    @Column(name = "`PrecioServicio`", precision = 18, scale = 2)
     private BigDecimal precioServicio;
 
-    @Column(name = "precio_adicionales", precision = 18, scale = 2)
+    @Column(name = "`PrecioAdicionales`", precision = 18, scale = 2)
     private BigDecimal precioAdicionales;
 
-    @Column(name = "plus_nocturno", precision = 18, scale = 2)
+    @Column(name = "`PlusNocturno`", precision = 18, scale = 2)
     private BigDecimal plusNocturno;
 
-    @Column(name = "total_servicio", precision = 18, scale = 2)
+    @Column(name = "`TotalServicio`", precision = 18, scale = 2)
     private BigDecimal totalServicio;
 
-    @Column(name = "comision_chofer_por_servicio", precision = 18, scale = 2)
+    @Column(name = "`ComisionChoferPorServicio`", precision = 18, scale = 2)
     private BigDecimal comisionChoferPorServicio;
 
-    @Column(name = "gastos_chofer", precision = 18, scale = 2)
+    @Column(name = "`GastosChofer`", precision = 18, scale = 2)
     private BigDecimal gastosChofer;
 
-    @Column(name = "fecha_servicio")
+    @Column(name = "`FechaServicio`")
     private LocalDate fechaServicio;
 
-    @Column(name = "hora_servicio")
+    @Column(name = "`HoraServicio`")
     private LocalTime horaServicio;
 
-    @Column(name = "fecha_fin_servicio")
+    @Column(name = "`FechaFinServicio`")
     private LocalDate fechaFinServicio;
 
-    @Column(name = "hora_fin_servicio")
+    @Column(name = "`HoraFinServicio`")
     private LocalTime horaFinServicio;
 
-    @Column(name = "duracion_servicio")
+    @Column(name = "`DuracionServicio`")
     private Integer duracionServicio;
 
-    @Column(name = "kms_realizados")
-    private Integer kmsRealizados;
+    @Column(name = "`KmsCartografia`")
+    private Integer kmsCartografia;
 
-    @Column(name = "categoria_servicio")
+    @Column(name = "`CategoriaServicio`")
     private String categoriaServicio;
 
-    @Column(name = "adicionales_servicio", columnDefinition = "TEXT")
+    @Column(name = "`AdicionalesServicio`", columnDefinition = "TEXT")
     private String adicionalesServicio;
 
-    @Column(name = "atributos_servicio", columnDefinition = "TEXT")
+    @Column(name = "`AtributosServicio`", columnDefinition = "TEXT")
     private String atributosServicio;
 
-    @Column(name = "apu")
+    @Column(name = "`APU`")
     private String apu;
 
-    @Column(name = "codigo_conductor")
+    @Column(name = "`CodigoConductor`")
     private String codigoConductor;
 
-    @Column(name = "conductor")
+    @Column(name = "`Conductor`")
     private String conductor;
 
-    @Column(name = "conductor_propio")
+    @Column(name = "`ConductorPropio`")
     private String conductorPropio;
 
-    @Column(name = "movil")
+    @Column(name = "`TipoConductor`")
+    private String tipoConductor;
+
+    @Column(name = "`Movil`")
     private String movil;
 
-    @Column(name = "patente")
+    @Column(name = "`Patente`")
     private String patente;
 
-    @Column(name = "tipo_de_pago")
+    @Column(name = "`TipoDePago`")
     private String tipoDePago;
 
-    @Column(name = "unidad_negocio")
+    @Column(name = "`UnidadNegocio`")
     private String unidadNegocio;
 
-    @Column(name = "estado_servicio")
+    @Column(name = "`EstadoServicio`")
     private String estadoServicio;
 
-    @Column(name = "liquidacion_chofer")
+    @Column(name = "`LiquidacionChofer`")
     private String liquidacionChofer;
 
-    @Column(name = "orden_nro")
+    @Column(name = "`OrdenNro`")
     private Long ordenNro;
 
-    @Column(name = "factura_nro")
+    @Column(name = "`FacturaNro`")
     private String facturaNro;
+
+    @Column(name = "`FechaHoraUltimaModi`")
+    private LocalDate fechaHoraUltimaModi;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
