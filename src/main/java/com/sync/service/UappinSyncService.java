@@ -129,7 +129,7 @@ public class UappinSyncService {
         entity.setFechaFinServicio(dto.getFechaFinServicio());
         entity.setHoraFinServicio(dto.getHoraFinServicio());
         entity.setDuracionServicio(dto.getDuracionServicio());
-        entity.setKmsRealizados(dto.getKmsRealizados());
+        entity.setKmsCartografia(dto.getKmsCartografia());
         entity.setCategoriaServicio(dto.getCategoriaServicio());
         entity.setAdicionalesServicio(dto.getAdicionalesServicio());
         entity.setAtributosServicio(dto.getAtributosServicio());
@@ -137,6 +137,7 @@ public class UappinSyncService {
         entity.setCodigoConductor(dto.getCodigoConductor());
         entity.setConductor(dto.getConductor());
         entity.setConductorPropio(dto.getConductorPropio());
+        entity.setTipoConductor(dto.getTipoConductor());
         entity.setMovil(dto.getMovil());
         entity.setPatente(dto.getPatente());
         entity.setTipoDePago(dto.getTipoDePago());
@@ -145,6 +146,7 @@ public class UappinSyncService {
         entity.setLiquidacionChofer(dto.getLiquidacionChofer());
         entity.setOrdenNro(dto.getOrdenNro());
         entity.setFacturaNro(dto.getFacturaNro());
+        entity.setFechaHoraUltimaModi(dto.getFechaHoraUltimaModi());
     }
 
     @Transactional

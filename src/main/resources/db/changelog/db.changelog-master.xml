@@ -14,6 +14,7 @@
     <include file="db/changelog/migrations/007-xubio-cobranza-pago-desagregado.xml"/>
     <include file="db/changelog/migrations/008-uappin-servicios.xml"/>
     <include file="db/changelog/migrations/009-uappin-archivos-procesados.xml"/>
+    <include file="db/changelog/migrations/010-uappin-servicios-columnas-excel.xml"/>
 
 </databaseChangeLog>
  
