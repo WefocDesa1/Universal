@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class XubioSyncService {
     private final ConceptoRetencionRepository conceptoRetencionRepo;
     private final SyncLogService syncLogService;
     private final ObjectMapper objectMapper;
+    private final TransactionTemplate transactionTemplate;
 
     // ─── CLIENTES ────────────────────────────────────────────────────────────
 
@@ -352,12 +354,11 @@ public class XubioSyncService {
             fetched = items.size();
 
             for (CobranzaDTO dto : items) {
-                var existing = cobranzaRepo.findByXubioId(dto.getCobranzaId());
-                if (existing.isPresent()) {
-                    updateCobranza(existing.get(), dto);
+                boolean existia = Boolean.TRUE.equals(
+                        transactionTemplate.execute(status -> upsertCobranza(dto)));
+                if (existia) {
                     updated++;
                 } else {
-                    createCobranza(dto);
                     created++;
                 }
             }
@@ -376,17 +377,12 @@ public class XubioSyncService {
         }
     }
 
-    @Transactional
-    protected void createCobranza(CobranzaDTO dto) {
-        CobranzaEntity entity = new CobranzaEntity();
+    private boolean upsertCobranza(CobranzaDTO dto) {
+        var existing = cobranzaRepo.findByXubioId(dto.getCobranzaId());
+        CobranzaEntity entity = existing.orElseGet(CobranzaEntity::new);
         mapCobranzaToEntity(dto, entity);
         cobranzaRepo.save(entity);
-    }
-
-    @Transactional
-    protected void updateCobranza(CobranzaEntity entity, CobranzaDTO dto) {
-        mapCobranzaToEntity(dto, entity);
-        cobranzaRepo.save(entity);
+        return existing.isPresent();
     }
 
     private void mapCobranzaToEntity(CobranzaDTO dto, CobranzaEntity entity) {
@@ -468,12 +464,11 @@ public class XubioSyncService {
             fetched = items.size();
 
             for (PagoDTO dto : items) {
-                var existing = pagoRepo.findByXubioId(dto.getTransaccionId());
-                if (existing.isPresent()) {
-                    updatePago(existing.get(), dto);
+                boolean existia = Boolean.TRUE.equals(
+                        transactionTemplate.execute(status -> upsertPago(dto)));
+                if (existia) {
                     updated++;
                 } else {
-                    createPago(dto);
                     created++;
                 }
             }
@@ -492,17 +487,12 @@ public class XubioSyncService {
         }
     }
 
-    @Transactional
-    protected void createPago(PagoDTO dto) {
-        PagoEntity entity = new PagoEntity();
+    private boolean upsertPago(PagoDTO dto) {
+        var existing = pagoRepo.findByXubioId(dto.getTransaccionId());
+        PagoEntity entity = existing.orElseGet(PagoEntity::new);
         mapPagoToEntity(dto, entity);
         pagoRepo.save(entity);
-    }
-
-    @Transactional
-    protected void updatePago(PagoEntity entity, PagoDTO dto) {
-        mapPagoToEntity(dto, entity);
-        pagoRepo.save(entity);
+        return existing.isPresent();
     }
 
     private void mapPagoToEntity(PagoDTO dto, PagoEntity entity) {

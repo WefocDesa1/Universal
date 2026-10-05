@@ -132,7 +132,7 @@ public class UappinServicioEntity {
     @Column(name = "`OrdenNro`")
     private Long ordenNro;
 
-    @Column(name = "`FacturaNro`")
+    @Column(name = "`FacturaNro`", columnDefinition = "TEXT")
     private String facturaNro;
 
     @Column(name = "`FechaHoraUltimaModi`")
