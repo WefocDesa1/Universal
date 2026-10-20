@@ -27,9 +27,11 @@ public class UappinScheduler {
     private final UappinSyncService uappinSyncService;
 
     /**
-     * Por defecto: todos los días a las 4am (después de que terminan los de Xubio).
+     * Por defecto: cada 5 minutos. Uappin deja el reporte en el SFTP 3 veces por día y los datos
+     * tienen que quedar cargados a las 5:30, 13:30 y 21:30; revisar seguido los deja disponibles a
+     * los pocos minutos de que llega cada archivo. Sin archivos nuevos no hace nada.
      */
-    @Scheduled(cron = "${scheduler.uappin.servicios.cron:0 0 4 * * *}", zone = ZONE)
+    @Scheduled(cron = "${scheduler.uappin.servicios.cron:0 */5 * * * *}", zone = ZONE)
     public void syncServicios() {
         log.info("[SCHEDULER][UAPPIN] Revisando inbox SFTP de servicios...");
         try {

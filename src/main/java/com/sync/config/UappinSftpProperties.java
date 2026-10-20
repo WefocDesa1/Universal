@@ -19,4 +19,10 @@ public class UappinSftpProperties {
     private String procesadosPath = "/upload/procesados";
     private String errorPath = "/upload/error";
     private int connectTimeout = 10000;
+    /**
+     * Antigüedad mínima (segundos desde su última modificación) para tomar un archivo del inbox.
+     * Evita leer un archivo que Uappin todavía está subiendo, ya que el scheduler revisa el SFTP
+     * cada pocos minutos.
+     */
+    private int minFileAgeSeconds = 60;
 }

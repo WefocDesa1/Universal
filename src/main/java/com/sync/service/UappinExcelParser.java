@@ -3,7 +3,6 @@ package com.sync.service;
 import com.sync.dto.uappin.UappinServicioDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -38,7 +37,9 @@ public class UappinExcelParser {
         List<UappinServicioDTO> result = new ArrayList<>();
         DataFormatter dataFormatter = new DataFormatter();
 
-        try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(xlsxBytes))) {
+        // WorkbookFactory detecta el formato por contenido (xlsx/OOXML o xls/OLE2),
+        // sin depender de la extensión del archivo.
+        try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(xlsxBytes))) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(sheet.getFirstRowNum());
             Map<String, Integer> columnIndex = buildColumnIndex(headerRow, dataFormatter);

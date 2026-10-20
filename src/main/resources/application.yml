@@ -66,6 +66,7 @@ uappin:
     procesados-path: ${UAPPIN_SFTP_PROCESADOS_PATH:/upload/procesados}
     error-path: ${UAPPIN_SFTP_ERROR_PATH:/upload/error}
     connect-timeout: 10000
+    min-file-age-seconds: ${UAPPIN_SFTP_MIN_FILE_AGE_SECONDS:60}
 
 # ─────────────────────────────────────────────
 # Schedulers (cron expressions)
@@ -74,7 +75,11 @@ scheduler:
   uappin:
     servicios:
       enabled: false               # activar (o setear SCHEDULER_UAPPIN_SERVICIOS_ENABLED=true) una vez que el SFTP esté configurado
-      cron: "0 0 4 * * *"          # todos los días a las 4am, después de los de Xubio
+      # Cada 5 minutos: Uappin manda el reporte 3 veces por día (llega ~5:50, 13:50 y 21:50 hora Argentina)
+      # y los datos tienen que quedar en el SQL a las 5:30, 13:30 y 21:30. Revisar seguido hace que queden
+      # cargados a los pocos minutos de llegar cada archivo, sin depender de la puntualidad del envío.
+      # Si no hay archivos nuevos la corrida no hace nada. Para horarios fijos: SCHEDULER_UAPPIN_SERVICIOS_CRON.
+      cron: "0 */5 * * * *"
   xubio:
     facturas:
       enabled: false

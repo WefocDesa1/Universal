@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -70,16 +71,42 @@ public class UappinSftpClient {
         }
     }
 
+    /**
+     * Lista los archivos de Excel del inbox, ordenados por nombre.
+     *
+     * Acepta .xlsx y .xls: el sistema de Uappin manda reportes que son xlsx
+     * reales (OOXML) pero con extensión .xls, y filtrando solo por .xlsx se
+     * ignoraban en silencio. El parser detecta el formato real por contenido.
+     *
+     * El orden importa: los archivos pueden repetir servicios (fotos móviles
+     * de los últimos días) y gana el último que se procesa, así que el más
+     * viejo tiene que ir primero. Los nombres llevan la fecha/hora de envío,
+     * por lo que el orden alfabético coincide con el cronológico.
+     *
+     * Se ignoran los archivos modificados hace menos de minFileAgeSeconds: como el
+     * scheduler revisa el SFTP cada pocos minutos, podría tomar uno que Uappin
+     * todavía está subiendo, y un archivo leído a medias falla y queda en "error".
+     * Se levanta en la próxima revisión, cuando ya terminó de subirse.
+     */
     @SuppressWarnings("unchecked")
     public List<String> listXlsxFiles(ChannelSftp channel) throws SftpException {
         Vector<ChannelSftp.LsEntry> entries = channel.ls(properties.getInboxPath());
         List<String> files = new ArrayList<>();
+        long ahora = System.currentTimeMillis() / 1000;
         for (ChannelSftp.LsEntry entry : entries) {
             String name = entry.getFilename();
-            if (!entry.getAttrs().isDir() && name.toLowerCase().endsWith(".xlsx")) {
+            String lower = name.toLowerCase();
+            if (!entry.getAttrs().isDir() && (lower.endsWith(".xlsx") || lower.endsWith(".xls"))) {
+                long edad = ahora - entry.getAttrs().getMTime();
+                if (edad < properties.getMinFileAgeSeconds()) {
+                    log.info("[UAPPIN] {} se deja para la próxima revisión: modificado hace {}s (mínimo {}s), puede estar subiéndose",
+                            name, edad, properties.getMinFileAgeSeconds());
+                    continue;
+                }
                 files.add(name);
             }
         }
+        Collections.sort(files);
         return files;
     }
 
